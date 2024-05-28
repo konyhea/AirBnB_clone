@@ -167,6 +167,37 @@ class HBNBCommand(cmd.Cmd):
     def help_update(self):
         print('Updates an instance based on the class name or updating attr')
 
+    def do_count(self, arg):
+        '''Retrieve the number of instances of a class.'''
+        arg = arg.split()
+        if len(arg) < 1:
+            pint('** class name missing **')
+            return
+        class_name = arg[0]
+        if class_name not in classes:
+            print('** class doesn\'t exist **')
+            return
+        count = 0
+        for obj in storage.all().values():
+            if obj.__class__.__name__ == class_name:
+                count += 1
+        print(count)
+    
+    def help_count(self):
+        print('retrieve number of instances created')
+
+    def default(self, arg):
+        args = arg.split('.')
+        class_name = args[0]
+        method = args[1].split('(')
+        method_dict = {
+        'count': self.do_count
+        }
+        if method[0] in method_dict:
+            return method_dict[method[0]](class_name)
+        else:
+            print('** Unknown syntax  {}'.format(arg))
+
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
